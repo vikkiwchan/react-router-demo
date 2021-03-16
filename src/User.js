@@ -1,6 +1,38 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { destroyUser } from './store';
 
+const User = ({ user, destroy }) => {
+  if (!user.id) {
+    return null;
+  }
+  return (
+    <div>
+      User details for {user.name}
+      <button onClick={() => destroy(user)}>x</button>
+    </div>
+  );
+};
+
+// defensive option of extract the data you need, keeps the User component clean since the logic is maintained here
+export default connect(
+  (state, otherProps) => {
+    const user =
+      state.users.find((user) => user.id === otherProps.match.params.id * 1) ||
+      {};
+    return {
+      user,
+    };
+  },
+  (dispatch) => {
+    return {
+      destroy: (user) => dispatch(destroyUser(user)),
+    };
+  }
+)(User);
+
+// Previous way of writing User
+/*
 const User = ({
   users,
   match: {
@@ -14,5 +46,4 @@ const User = ({
   }
   return <div>User details for {user.name}</div>;
 };
-
-export default connect((state) => state)(User);
+*/

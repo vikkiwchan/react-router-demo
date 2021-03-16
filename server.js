@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
+app.use(express.json());
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 app.get('/', (req, res, next) =>
@@ -19,6 +20,17 @@ app.get('/api/users', async (req, res, next) => {
 app.post('/api/users', async (req, res, next) => {
   try {
     res.send(await User.createRandomUser());
+    res.status(201).send(await User.create(req.body));
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.delete('/api/users/:id', async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    await user.destroy();
+    res.sendStatus(204);
   } catch (err) {
     console.error(err);
   }
