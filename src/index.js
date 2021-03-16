@@ -21,7 +21,7 @@ class _App extends Component {
           <h1>Acme Users</h1>
           <Route component={Nav} />
           <Route component={Home} path='/' exact />
-          <Route component={Users} path='/users' />
+          <Route component={Users} path='/users' exact />
           <Route component={User} path='/users/:id' />
         </div>
       </Router>
