@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import faker from 'faker';
 import { createUser } from './store';
 
 // Link - higher order component that listens for hash changes
@@ -16,7 +15,12 @@ const Nav = ({ create, users, location: { pathname } }) => {
       <Link to='/users' className={pathname === '/users' ? 'selected' : ''}>
         Users ({users.length})
       </Link>
-      <button onClick={() => create(faker.name.firstName())}>Create</button>
+      <Link
+        to='/users/create'
+        className={pathname === '/users/create' ? 'selected' : ''}
+      >
+        Create User
+      </Link>
     </nav>
   );
 };
@@ -24,7 +28,6 @@ const Nav = ({ create, users, location: { pathname } }) => {
 export default connect(
   (state) => state,
   (dispatch, { history }) => {
-    console.log(history);
     return {
       create: (name) => {
         dispatch(createUser(name, history));

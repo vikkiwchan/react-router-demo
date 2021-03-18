@@ -1,15 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { destroyUser } from './store';
+import { Link } from 'react-router-dom';
 
 const User = ({ user, destroy }) => {
   if (!user.id) {
-    return null;
+    return '...loading user';
   }
   return (
     <div>
       User details for {user.name}
       <button onClick={() => destroy(user)}>x</button>
+      <Link to={`/users/${user.id}/update`}>Update</Link>
     </div>
   );
 };
@@ -24,9 +26,9 @@ export default connect(
       user,
     };
   },
-  (dispatch) => {
+  (dispatch, { history }) => {
     return {
-      destroy: (user) => dispatch(destroyUser(user)),
+      destroy: (user) => dispatch(destroyUser(user, history)),
     };
   }
 )(User);

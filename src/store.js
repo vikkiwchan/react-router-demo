@@ -5,6 +5,7 @@ import axios from 'axios';
 const LOAD = 'LOAD';
 const CREATE_USER = 'CREATE_USER';
 const DESTROY = 'DESTROY';
+const UPDATE_USER = 'UPDATE_USER';
 
 const usersReducer = (state = [], action) => {
   if (action.type === LOAD) {
@@ -15,6 +16,11 @@ const usersReducer = (state = [], action) => {
   }
   if (action.type === DESTROY) {
     state = state.filter((user) => user.id !== action.user.id);
+  }
+  if (action.type === UPDATE_USER) {
+    state = state.map((user) => {
+      user.id !== action.user.id ? user : action.user;
+    });
   }
   return state;
 };
@@ -49,6 +55,19 @@ export const destroyUser = (user, history) => {
     await axios.delete(`/api/users/${user.id}`);
     dispatch(_destroyUser(user));
     history.push(`/users/`);
+  };
+};
+
+const _updateUser = (user) => ({
+  type: UPDATE_USER,
+  user,
+});
+
+export const updateUser = (id, name, history) => {
+  return async (dispatch) => {
+    const user = await axios.put(`/api/users/${id}`, { name }).data;
+    dispatch(_updateUser(user));
+    history.push(`/users`);
   };
 };
 

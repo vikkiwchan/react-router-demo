@@ -19,8 +19,19 @@ app.get('/api/users', async (req, res, next) => {
 
 app.post('/api/users', async (req, res, next) => {
   try {
-    res.send(await User.createRandomUser());
+    //res.send(await User.createRandomUser());
     res.status(201).send(await User.create(req.body));
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.put('/api/users/:id', async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    console.log(req.body);
+    await user.update(req.body);
+    res.status(304).send(user);
   } catch (err) {
     console.error(err);
   }
@@ -36,6 +47,10 @@ app.delete('/api/users/:id', async (req, res, next) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  res.status(500).send({ error: err });
+});
+
 const Sequelize = require('sequelize');
 const { STRING } = Sequelize;
 const db = new Sequelize(
@@ -44,7 +59,13 @@ const db = new Sequelize(
 );
 
 const User = db.define('user', {
-  name: STRING,
+  name: {
+    type: STRING,
+    unique: true,
+    validate: {
+      notEmpty: true,
+    },
+  },
 });
 
 User.createWithName = (name) => User.create({ name });
